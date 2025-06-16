@@ -6,6 +6,8 @@ A Java-based puzzle game where you play as a virus trying to infect a maze while
 
 ![image](https://github.com/user-attachments/assets/5d861721-6b96-4260-b42c-6f1feec8ed4f)
 
+![image](https://github.com/user-attachments/assets/9d090d82-5410-463a-9731-ed5845dd9e97)
+
 ![image](https://github.com/user-attachments/assets/9172f81d-ec74-4662-9fbc-f00d2d7aae6d)
 
 
