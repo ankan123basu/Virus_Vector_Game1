@@ -219,6 +219,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         if (gameState.isLevelComplete()) {
             if (e.getKeyCode() == KeyEvent.VK_N) {
                 gameState.nextLevel();
+                window.updateTitle("Level " + gameState.getLevel());
                 gameTimer.start();
                 showMessage("Level " + gameState.getLevel() + " - Infect 70% of the grid!");
             }

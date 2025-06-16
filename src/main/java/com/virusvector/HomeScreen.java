@@ -10,6 +10,7 @@ import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
@@ -234,8 +235,9 @@ public class HomeScreen extends JPanel implements ActionListener {
             );
         }
         
-        // Button background
-        boolean isHover = startButton.contains(getMousePosition());
+        // Button background - safely handle null mouse position
+        Point mousePos = getMousePosition();
+        boolean isHover = mousePos != null && startButton.contains(mousePos);
         GradientPaint gradient = new GradientPaint(
             startButton.x, startButton.y, 
             isHover ? new Color(255, 80, 80) : new Color(200, 0, 0),
