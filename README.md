@@ -2,6 +2,14 @@
 
 A Java-based puzzle game where you play as a virus trying to infect a maze while avoiding obstacles and collecting power-ups.
 
+![image](https://github.com/user-attachments/assets/e3204c36-1127-4550-ac01-20791d646e76)
+
+![image](https://github.com/user-attachments/assets/914ba433-edee-42f8-96e5-d311e7113a04)
+
+![image](https://github.com/user-attachments/assets/edafc671-22ca-4592-b0ef-4b9bc103cb85)
+
+![image](https://github.com/user-attachments/assets/f1402c4d-5958-493a-af08-10514c791052)
+
 ## 🎮 Game Overview
 
 In **Virus Vector: Infection Maze**, you control a virus that must spread through a maze, infecting empty tiles while avoiding hazards. The game features multiple levels, power-ups, and increasing difficulty.
