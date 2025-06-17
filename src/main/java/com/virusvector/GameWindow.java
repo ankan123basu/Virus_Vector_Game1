@@ -1,7 +1,7 @@
 package com.virusvector;
 
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public final class GameWindow extends JFrame {
     private static final int WINDOW_WIDTH = 800;
@@ -23,6 +23,13 @@ public final class GameWindow extends JFrame {
         setTitle(GAME_TITLE);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
+        // Set custom window icon
+        try {
+            ImageIcon ig = new ImageIcon("virus logo-new.jpg");
+            setIconImage(ig.getImage());
+        } catch (Exception e) {
+            System.out.println("Could not load custom window icon");
+        }
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         setLocationRelativeTo(null);
         

@@ -134,6 +134,23 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 EntityType type = grid[x][y];
                 g2d.setColor(type.getColor());
                 g2d.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+
+                // Draw special icons for new enemies and spawners
+                if (type == EntityType.PATROLLING_ANTIVIRUS) {
+                    g2d.setColor(Color.ORANGE);
+                    g2d.drawLine(x * TILE_SIZE + 5, y * TILE_SIZE + TILE_SIZE/2, x * TILE_SIZE + TILE_SIZE - 5, y * TILE_SIZE + TILE_SIZE/2);
+                } else if (type == EntityType.CHASING_ANTIVIRUS) {
+                    g2d.setColor(Color.MAGENTA);
+                    g2d.fillOval(x * TILE_SIZE + 10, y * TILE_SIZE + 10, TILE_SIZE - 20, TILE_SIZE - 20);
+                } else if (type == EntityType.RANDOM_ANTIVIRUS) {
+                    g2d.setColor(Color.CYAN);
+                    g2d.drawRect(x * TILE_SIZE + 10, y * TILE_SIZE + 10, TILE_SIZE - 20, TILE_SIZE - 20);
+                } else if (type == EntityType.ENEMY_SPAWNER) {
+                    g2d.setColor(Color.YELLOW);
+                    g2d.fillRect(x * TILE_SIZE + 12, y * TILE_SIZE + 12, TILE_SIZE - 24, TILE_SIZE - 24);
+                    g2d.setColor(Color.RED);
+                    g2d.drawOval(x * TILE_SIZE + 8, y * TILE_SIZE + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+                }
                 
                 // Draw grid lines
                 g2d.setColor(Color.BLACK);

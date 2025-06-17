@@ -8,21 +8,53 @@ In **Virus Vector: Infection Maze**, you control a virus that must spread throug
 
 ## 🚀 Features
 
-- **Infection Mechanic**: Spread the virus to adjacent tiles to turn them green
-- **Obstacles**:
-  - **Firewalls (Orange)**: 
-    - Block your movement by default
-    - Can be passed when you have an active INFECT_UPGRADE (light blue power-up)
-    - Passing through grants you a shield
-    - Number increases with each level
-  - **Anti-Virus (Red)**: Restarts game from level 1 if hit without shield
-- **Power-ups**:
-  - **Infectivity Upgrade (Light Blue)**: Increases infection range to 3x3 for 10 seconds
-  - **Shield (Blue)**: Protects against anti-virus traps for 15 seconds
-  - **Time Extension (Yellow)**: Adds 30 seconds to the timer (appears from level 3+)
-- **Progressive Difficulty**: Each level introduces new challenges
-- **Lives System**: 10 lives per level
-- **Visual Feedback**: Clear indicators for power-ups and game state
+- **Strategic Enemy Types:**
+  - **Patrolling Antivirus (Orange Line):** Moves left/right, reverses at obstacles.
+  - **Chasing Antivirus (Magenta Circle):** Pursues the player directly.
+  - **Random Antivirus (Cyan Outline):** Moves unpredictably each turn.
+  - **Enemy Spawner (Yellow + Red Ring):** Periodically spawns new antivirus threats.
+- **Infection Mechanic:** Infect adjacent tiles to spread your virus.
+- **Obstacles:**
+  - **Firewalls (Brown):** Block movement unless you have an infection upgrade.
+  - **Classic Antivirus (Red):** Static threat, causes you to lose a life if touched without a shield.
+- **Power-ups:**
+  - **Infectivity Upgrade (Cyan):** Temporarily increases infection range, lets you breach firewalls.
+  - **Shield (Blue):** Temporary immunity to all threats.
+  - **Time Extension (Yellow):** Adds 30 seconds to the timer.
+- **Lives System:** 10 lives per level.
+- **Progressive Difficulty:** More enemies, spawners, and obstacles each level.
+- **Enhanced Visual Feedback:** Distinct icons/colors for all entities, power-ups, and effects.
+- **Advanced Home Screen:** Animated pixel art, glowing title, interactive start button, and pixel burst animation.
+- **Smooth Animations:** 60 FPS, animated enemy movement, and particle effects.
+- **Modern Controls:** Arrow keys for movement, hotkeys for restart/next level, pause, and more.
+
+---
+
+## 🧩 Strategic Gameplay Enhancements
+
+Virus Vector has evolved into a tactical puzzle game with:
+- Multiple enemy types with unique AI behaviors
+- Dynamic enemy spawners that increase challenge over time
+- Stackable and negative power-ups
+- Visual clarity for all threats and upgrades
+- Animated home screen with pixel burst effects for a polished feel
+
+### **Entity & Power-up Legend**
+
+| Entity/Power-up            | Color/Icon                | Role/Effect                                         |
+|---------------------------|---------------------------|-----------------------------------------------------|
+| **Player**                | Bright Green + Glow       | You! Infect tiles and avoid threats                 |
+| **Classic Antivirus**     | Red                       | Static enemy, lose life on contact                  |
+| **Patrolling Antivirus**  | Orange line               | Moves left/right, reverses at obstacles             |
+| **Chasing Antivirus**     | Magenta circle            | Pursues player every turn                           |
+| **Random Antivirus**      | Cyan outline              | Moves randomly each turn                            |
+| **Enemy Spawner**         | Yellow + Red ring         | Spawns new antivirus periodically                   |
+| **Firewall**              | Brown                     | Blocks movement unless upgraded                     |
+| **Infectivity Upgrade**   | Cyan                      | Increases infection range, breach firewalls         |
+| **Shield**                | Blue                      | Temporary immunity                                  |
+| **Time Extension**        | Yellow                    | Adds time to the level                              |
+
+---
 
 ## 🛠️ Tech Stack
 
@@ -180,7 +212,7 @@ This project is open source and available under the [MIT License](LICENSE).
 ## 🙏 Credits
 
 - Developed with ❤️ by [ANKAN BASU]
-- Sound effects and graphics created with [Tool Name] (if applicable)
+
 
 ## 🤝 Contributing
 

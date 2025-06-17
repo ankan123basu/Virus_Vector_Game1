@@ -20,7 +20,20 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.Random;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 public class HomeScreen extends JPanel implements ActionListener {
+    private static class BurstParticle {
+        float x, y, vx, vy, alpha;
+        Color color;
+        public BurstParticle(float x, float y, float vx, float vy, Color color) {
+            this.x = x; this.y = y; this.vx = vx; this.vy = vy; this.alpha = 1.0f; this.color = color;
+        }
+    }
+    private final java.util.List<BurstParticle> burstParticles = new ArrayList<>();
+    private long lastBurstTime = 0;
+
     private final Rectangle startButton;
     private final Timer animationTimer;
     @SuppressWarnings("unused") // Used in mouseClicked handler
@@ -90,6 +103,13 @@ public class HomeScreen extends JPanel implements ActionListener {
             // Update animation
             hue = (hue + 0.005f) % 1.0f;
             animationOffset = (animationOffset + 1) % 10;
+            // Pixel burst: spawn every 30 frames (~1s)
+            long now = System.currentTimeMillis();
+            if (now - lastBurstTime > 1000) {
+                spawnBurstParticles();
+                lastBurstTime = now;
+            }
+            updateBurstParticles();
             repaint();
         }
     }
@@ -120,7 +140,8 @@ public class HomeScreen extends JPanel implements ActionListener {
         
         // Draw virus animation
         drawVirusAnimation(g2d);
-        
+        // Draw pixel burst particles
+        drawBurstParticles(g2d);
         // Draw start button with hover effect
         drawStartButton(g2d);
     }
@@ -278,5 +299,41 @@ public class HomeScreen extends JPanel implements ActionListener {
         g2d.drawString(text, 
             startButton.x + (startButton.width - textWidth) / 2, 
             startButton.y + startButton.height / 2 + fm.getAscent() / 2 - 1);
+    }
+
+    // --- Pixel burst animation ---
+    private void spawnBurstParticles() {
+        int centerX = 400;
+        int centerY = 300;
+        int virusSize = 120;
+        int px = centerX;
+        int py = centerY;
+        for (int i = 0; i < 6; i++) {
+            double angle = Math.random() * Math.PI * 2;
+            float speed = 2.0f + (float)Math.random() * 1.5f;
+            float vx = (float)(Math.cos(angle) * speed);
+            float vy = (float)(Math.sin(angle) * speed + 1.5); // Add downward bias
+            Color c = Math.random() > 0.5 ? new Color(0,255,0) : new Color(200,255,200);
+            burstParticles.add(new BurstParticle(px, py, vx, vy, c));
+        }
+    }
+
+    private void updateBurstParticles() {
+        Iterator<BurstParticle> it = burstParticles.iterator();
+        while (it.hasNext()) {
+            BurstParticle p = it.next();
+            p.x += p.vx;
+            p.y += p.vy;
+            p.alpha -= 0.025f + Math.random()*0.01f;
+            if (p.alpha <= 0f) it.remove();
+        }
+    }
+
+    private void drawBurstParticles(Graphics2D g2d) {
+        for (BurstParticle p : burstParticles) {
+            int size = 8;
+            g2d.setColor(new Color(p.color.getRed(), p.color.getGreen(), p.color.getBlue(), (int)(p.alpha*255)));
+            g2d.fillRect((int)p.x - size/2, (int)p.y - size/2, size, size);
+        }
     }
 }

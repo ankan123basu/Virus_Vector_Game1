@@ -17,7 +17,13 @@ public enum EntityType {
     // Obstacles
     FIREWALL(4, new Color(200, 100, 0)),
     ANTIVIRUS(5, new Color(200, 0, 0)),
-    
+
+    // Advanced Enemies
+    PATROLLING_ANTIVIRUS(9, new Color(255, 140, 0)),
+    CHASING_ANTIVIRUS(10, new Color(255, 0, 255)),
+    RANDOM_ANTIVIRUS(11, new Color(100, 0, 255)),
+    ENEMY_SPAWNER(12, new Color(255, 255, 0)),
+
     // Power-ups
     INFECT_UPGRADE(6, new Color(0, 200, 200)),
     SHIELD(7, new Color(0, 100, 200)),

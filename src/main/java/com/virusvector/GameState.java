@@ -6,6 +6,10 @@ import java.util.Random;
 /**
  * Manages the game state including the grid, player position, score, and game logic.
  */
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+
 public class GameState {
     private static final int GRID_WIDTH = 20;
     private static final int GRID_HEIGHT = 15;
@@ -23,7 +27,15 @@ public class GameState {
     private boolean gameOver;
     private boolean levelComplete;
     private final Random random;
-    
+
+    // Enemy tracking
+    private List<Point> patrollingEnemies = new ArrayList<>();
+    private HashMap<Point, Boolean> patrollingDirections = new HashMap<>(); // true: right, false: left
+    private List<Point> chasingEnemies = new ArrayList<>();
+    private List<Point> randomEnemies = new ArrayList<>();
+    private List<Point> spawners = new ArrayList<>();
+    private HashMap<Point, Long> spawnerTimers = new HashMap<>();
+
     // Power-up states
     private boolean hasShield;
     private int infectionRange;
@@ -50,6 +62,12 @@ public class GameState {
     
     private void initializeLevel() {
         grid = new EntityType[GRID_WIDTH][GRID_HEIGHT];
+        patrollingEnemies.clear();
+        chasingEnemies.clear();
+        randomEnemies.clear();
+        spawners.clear();
+        patrollingDirections.clear();
+        spawnerTimers.clear();
         
         // Fill with empty tiles
         for (int x = 0; x < GRID_WIDTH; x++) {
@@ -65,12 +83,48 @@ public class GameState {
         // Place walls and obstacles
         placeObstacles();
         placePowerUps();
+        placeStrategicEnemiesAndSpawners();
         
         // Reset level state
         timeLeft = LEVEL_TIME_SECONDS * 1000; // Convert to milliseconds
         lastUpdateTime = System.currentTimeMillis();
         gameOver = false;
         levelComplete = false;
+    }
+
+    private void placeStrategicEnemiesAndSpawners() {
+        // Place patrolling enemies
+        for (int i = 0; i < Math.max(1, level / 2); i++) {
+            Point p = placeRandomStrategicEntity(EntityType.PATROLLING_ANTIVIRUS);
+            patrollingEnemies.add(p);
+            patrollingDirections.put(p, random.nextBoolean());
+        }
+        // Place chasing enemies
+        for (int i = 0; i < level / 2; i++) {
+            Point p = placeRandomStrategicEntity(EntityType.CHASING_ANTIVIRUS);
+            chasingEnemies.add(p);
+        }
+        // Place random-walking enemies
+        for (int i = 0; i < level / 2; i++) {
+            Point p = placeRandomStrategicEntity(EntityType.RANDOM_ANTIVIRUS);
+            randomEnemies.add(p);
+        }
+        // Place enemy spawners
+        for (int i = 0; i < Math.max(1, level / 3); i++) {
+            Point p = placeRandomStrategicEntity(EntityType.ENEMY_SPAWNER);
+            spawners.add(p);
+            spawnerTimers.put(p, System.currentTimeMillis());
+        }
+    }
+
+    private Point placeRandomStrategicEntity(EntityType type) {
+        int x, y;
+        do {
+            x = 1 + random.nextInt(GRID_WIDTH - 2);
+            y = 1 + random.nextInt(GRID_HEIGHT - 2);
+        } while (grid[x][y] != EntityType.EMPTY || (x == playerPos.x && y == playerPos.y));
+        grid[x][y] = type;
+        return new Point(x, y);
     }
     
     private void placeObstacles() {
@@ -139,6 +193,92 @@ public class GameState {
         
         // Check power-up expiration
         checkPowerUpExpiration(currentTime);
+
+        // Move patrolling enemies
+        List<Point> newPatrolling = new ArrayList<>();
+        HashMap<Point, Boolean> newDirections = new HashMap<>();
+        for (Point p : patrollingEnemies) {
+            boolean right = patrollingDirections.getOrDefault(p, true);
+            int nx = p.x + (right ? 1 : -1);
+            int ny = p.y;
+            if (nx <= 0 || nx >= GRID_WIDTH - 1 || grid[nx][ny] != EntityType.EMPTY) {
+                right = !right;
+                nx = p.x + (right ? 1 : -1);
+            }
+            if (nx > 0 && nx < GRID_WIDTH - 1 && grid[nx][ny] == EntityType.EMPTY) {
+                grid[p.x][p.y] = EntityType.EMPTY;
+                p.setLocation(nx, ny);
+                grid[nx][ny] = EntityType.PATROLLING_ANTIVIRUS;
+            }
+            newPatrolling.add(new Point(p));
+            newDirections.put(new Point(p), right);
+        }
+        patrollingEnemies = newPatrolling;
+        patrollingDirections = newDirections;
+
+        // Move chasing enemies
+        List<Point> newChasing = new ArrayList<>();
+        for (Point p : chasingEnemies) {
+            int dx = Integer.compare(playerPos.x, p.x);
+            int dy = Integer.compare(playerPos.y, p.y);
+            int nx = p.x + dx;
+            int ny = p.y + dy;
+            if (nx > 0 && nx < GRID_WIDTH - 1 && ny > 0 && ny < GRID_HEIGHT - 1 && grid[nx][ny] == EntityType.EMPTY) {
+                grid[p.x][p.y] = EntityType.EMPTY;
+                p.setLocation(nx, ny);
+                grid[nx][ny] = EntityType.CHASING_ANTIVIRUS;
+            }
+            newChasing.add(new Point(p));
+        }
+        chasingEnemies = newChasing;
+
+        // Move random enemies
+        List<Point> newRandom = new ArrayList<>();
+        for (Point p : randomEnemies) {
+            int[] dirs = {-1, 0, 1};
+            int dx = dirs[random.nextInt(3)];
+            int dy = dirs[random.nextInt(3)];
+            int nx = p.x + dx;
+            int ny = p.y + dy;
+            if (nx > 0 && nx < GRID_WIDTH - 1 && ny > 0 && ny < GRID_HEIGHT - 1 && grid[nx][ny] == EntityType.EMPTY) {
+                grid[p.x][p.y] = EntityType.EMPTY;
+                p.setLocation(nx, ny);
+                grid[nx][ny] = EntityType.RANDOM_ANTIVIRUS;
+            }
+            newRandom.add(new Point(p));
+        }
+        randomEnemies = newRandom;
+
+        // Enemy spawner logic
+        for (Point s : spawners) {
+            long lastSpawn = spawnerTimers.getOrDefault(s, 0L);
+            if (currentTime - lastSpawn > 4000) { // spawn every 4 seconds
+                // Find adjacent empty cell
+                int[][] adj = {{1,0},{-1,0},{0,1},{0,-1}};
+                for (int[] d : adj) {
+                    int nx = s.x + d[0];
+                    int ny = s.y + d[1];
+                    if (nx > 0 && nx < GRID_WIDTH - 1 && ny > 0 && ny < GRID_HEIGHT - 1 && grid[nx][ny] == EntityType.EMPTY) {
+                        EntityType enemyType = switch (random.nextInt(3)) {
+                            case 0 -> EntityType.PATROLLING_ANTIVIRUS;
+                            case 1 -> EntityType.CHASING_ANTIVIRUS;
+                            default -> EntityType.RANDOM_ANTIVIRUS;
+                        };
+                        grid[nx][ny] = enemyType;
+                        if (enemyType == EntityType.PATROLLING_ANTIVIRUS) {
+                            patrollingEnemies.add(new Point(nx, ny));
+                            patrollingDirections.put(new Point(nx, ny), random.nextBoolean());
+                        } else if (enemyType == EntityType.CHASING_ANTIVIRUS) {
+                            chasingEnemies.add(new Point(nx, ny));
+                        } else {
+                            randomEnemies.add(new Point(nx, ny));
+                        }
+                        spawnerTimers.put(s, currentTime);
+                        break;
+                    }
+                }
+            }
+        }
     }
     
     private void checkPowerUpExpiration(long currentTime) {
@@ -181,12 +321,26 @@ public class GameState {
                     canMove = false;
                 }
             }
-            case ANTIVIRUS -> {
+            case ANTIVIRUS, PATROLLING_ANTIVIRUS, CHASING_ANTIVIRUS, RANDOM_ANTIVIRUS -> {
                 if (!hasShield) {
-                    // Remove a life instead of restarting the game
                     loseLife();
                     return;
+                } else {
+                    // Remove enemy from tracking list
+                    if (target == EntityType.PATROLLING_ANTIVIRUS) {
+                        patrollingEnemies.removeIf(e -> e.equals(new Point(newX, newY)));
+                        patrollingDirections.remove(new Point(newX, newY));
+                    } else if (target == EntityType.CHASING_ANTIVIRUS) {
+                        chasingEnemies.removeIf(e -> e.equals(new Point(newX, newY)));
+                    } else if (target == EntityType.RANDOM_ANTIVIRUS) {
+                        randomEnemies.removeIf(e -> e.equals(new Point(newX, newY)));
+                    }
                 }
+            }
+            case ENEMY_SPAWNER -> {
+                // Destroy the spawner
+                spawners.removeIf(e -> e.equals(new Point(newX, newY)));
+                spawnerTimers.remove(new Point(newX, newY));
             }
             case INFECT_UPGRADE -> {
                 infectionRange = 3;
