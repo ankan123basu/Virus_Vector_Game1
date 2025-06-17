@@ -2,14 +2,13 @@
 
 A Java-based puzzle game where you play as a virus trying to infect a maze while avoiding obstacles and collecting power-ups.
 
-![image](https://github.com/user-attachments/assets/3b6c5d53-dc79-4abb-bd3c-c409f7726671)
+![image](https://github.com/user-attachments/assets/e3204c36-1127-4550-ac01-20791d646e76)
 
-![image](https://github.com/user-attachments/assets/5d861721-6b96-4260-b42c-6f1feec8ed4f)
+![image](https://github.com/user-attachments/assets/914ba433-edee-42f8-96e5-d311e7113a04)
 
-![image](https://github.com/user-attachments/assets/9d090d82-5410-463a-9731-ed5845dd9e97)
+![image](https://github.com/user-attachments/assets/edafc671-22ca-4592-b0ef-4b9bc103cb85)
 
-![image](https://github.com/user-attachments/assets/9172f81d-ec74-4662-9fbc-f00d2d7aae6d)
-
+![image](https://github.com/user-attachments/assets/f1402c4d-5958-493a-af08-10514c791052)
 
 ## 🎮 Game Overview
 
