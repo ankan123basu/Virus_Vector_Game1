@@ -23,7 +23,7 @@ In **Virus Vector: Infection Maze**, you control a virus that must spread throug
   - **Enemy Spawner (Yellow + Red Ring):** Periodically spawns new antivirus threats.
 - **Infection Mechanic:** Infect adjacent tiles to spread your virus.
 - **Obstacles:**
-  - **Firewalls (Brown):** Block movement unless you have an infection upgrade.
+  - **Firewalls (Brown):** Block movement unless you have an infection upgrades.
   - **Classic Antivirus (Red):** Static threat, causes you to lose a life if touched without a shield.
 - **Power-ups:**
   - **Infectivity Upgrade (Cyan):** Temporarily increases infection range, lets you breach firewalls.
